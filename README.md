@@ -29,4 +29,4 @@ It is at a very early stage of development and is not ready for use yet. SOON.
     ```
 
 enjoy! Please do commit if you feel like it, i have no idea what i am doing. Feel free to provide any sort of advice you want. 
-Email me at <b.ar> for anything.
+Email me at <b.aritra@icloud.com> for anything.
