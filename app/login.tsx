@@ -3,16 +3,17 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
   Platform,
-  Button,
   TouchableOpacity,
   Alert,
+  View,
+  Text,
 } from "react-native";
-import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
+//import { ThemedText } from "@/components/ThemedText";
+//import { ThemedView } from "@/components/ThemedView";
 import { fetch } from "expo/fetch";
 import { useState } from "react";
 import { router, Router } from "expo-router";
-import { getData, getDeviceId } from "@/utils/storage";
+import { getAsyncValue, getDeviceId, setAsyncValue, setSecureStoreValue } from "@/utils/storage";
 import * as Device from "expo-device";
 
 export default function Index() {
@@ -25,14 +26,14 @@ export default function Index() {
   async function handleLogin() {
     setIsLoading(true);
     console.log("Logging in");
-    const serverIp = await getData("serverIp");
+    const serverIp = await getAsyncValue("serverIp");
     console.log("Server IP", serverIp);
     if (!serverIp) {
       Alert.alert("Server IP not found");
       setIsLoading(false);
       router.push("/");
     }
-    const serverVersion = await getData("serverVersion");
+    const serverVersion = await getAsyncValue("serverVersion");
     const deviceId = await getDeviceId();
 
     try {
@@ -58,6 +59,12 @@ export default function Index() {
         setErrorMessage("Login successful");
         setIsError(false);
         // i need to implement a way to store the user token
+        console.log("Access Token:", data.AccessToken);
+        console.log("Server Id:", data.ServerId);
+        await setSecureStoreValue("AccessToken", data.AccessToken);
+        await setSecureStoreValue("ServerId", data.ServerId);
+        //await setAsyncValue("userResponse", data);
+        router.push("/home");
       } else {
         // This handles the case where the server returns a 401 unauthorized
         console.log("Login failed with status:", response.status);
@@ -82,24 +89,25 @@ export default function Index() {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={{ flex: 1 }}
     >
-      <ThemedView
-        style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+      <View
+        style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "#151718" }}
       >
-        <ThemedText style={styles.welcome}>Welcome</ThemedText>
-        <ThemedText style={styles.instructions}>
+        <Text style={styles.welcome}>Welcome</Text>
+        <Text style={styles.instructions}>
           Please Log In with your JellyFin User Account
-        </ThemedText>
-      </ThemedView>
+        </Text>
+      </View>
 
-      <ThemedView
+      <View
         style={{
           flex: 1,
           justifyContent: "center",
           alignItems: "center",
+          backgroundColor: "#151718",
         }}
       >
         {errorMessage ? (
-          <ThemedText style={styles.instructions}>{errorMessage}</ThemedText>
+          <Text style={styles.instructions}>{errorMessage}</Text>
         ) : null}
         <TextInput
           style={[styles.input, { borderColor: isError ? "red" : "#444648" }]}
@@ -123,44 +131,27 @@ export default function Index() {
           onPress={handleLogin}
           disabled={isLoading}
         >
-          <ThemedText style={styles.buttonText}>
+          <Text style={styles.buttonText}>
             {isLoading ? "Logging in..." : "Login"}
-          </ThemedText>
+          </Text>
         </TouchableOpacity>
-      </ThemedView>
+      </View>
     </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
-  //welcome: {
-  //  fontSize: 40,
-  //  lineHeight: 40,
-  //},
-  //instructions: {
-  //  textAlign: "center",
-  //},
-  //input: {
-  //  height: 40,
-  //  width: 200,
-  //  borderRadius: 5,
-  //  color: "#ECEDEE" ,
-  //  borderColor: "#444648",
-  //  borderWidth: 1,
-  //  backgroundColor: "#2E3032",
-  //  paddingHorizontal: 10,
-  //
-  //},
-
   welcome: {
     fontSize: 40,
     lineHeight: 40,
     marginBottom: 20,
     fontWeight: "bold",
+    color: "#ECEDEE",
   },
   instructions: {
     textAlign: "center",
     marginBottom: 20,
+    
   },
   input: {
     height: 50,

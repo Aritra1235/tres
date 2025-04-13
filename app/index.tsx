@@ -4,13 +4,16 @@ import {
   KeyboardAvoidingView,
   Platform,
   TouchableOpacity,
+  View,
+  Text
 } from "react-native";
-import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
+//import { ThemedText } from "@/components/ThemedText";
+//import { ThemedView } from "@/components/ThemedView";
 import { fetch } from "expo/fetch";
 import { useState } from "react";
 import { router, Router } from "expo-router";
-import { storeData } from "@/utils/storage";
+import { setAsyncValue } from "@/utils/storage";
+
 
 export default function Index() {
   const [errorMessage, setErrorMessage] = useState("");
@@ -42,7 +45,7 @@ export default function Index() {
       .then((response) => {
         console.log("Response", response);
         if (response.status === 200) {
-          return response.json(); // here i will parse the json
+          return response.json(); // here I will parse the json
         } else {
           console.log("Server not found");
           throw new Error("Server not found");
@@ -55,9 +58,9 @@ export default function Index() {
 
         setErrorMessage(`Connected to ${data.ServerName} (${data.Version})`);
         setIsError(false);
-        storeData("serverIp", serverIp);
-        storeData("serverName", data.ServerName);
-        storeData("serverVersion", data.Version);
+        setAsyncValue("serverIp", serverIp);
+        setAsyncValue("serverName", data.ServerName);
+        setAsyncValue("serverVersion", data.Version);
         router.push("/login");
       })
       .catch((error) => {
@@ -72,28 +75,29 @@ export default function Index() {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={{ flex: 1 }}
     >
-      <ThemedView
-        style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+      <View
+        style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "#151718" }}
       >
-        <ThemedText style={styles.welcome}>Welcome</ThemedText>
-        <ThemedText style={styles.instructions}>
+        <Text style={styles.welcome}>Welcome</Text>
+        <Text style={styles.instructions}>
           This Is A Simple Mobile Music Client For JellyFin
-        </ThemedText>
-      </ThemedView>
+        </Text>
+      </View>
 
-      <ThemedView
+      <View
         style={{
           flex: 1,
           justifyContent: "center",
           alignItems: "center",
-          gap: 5,
+          gap: 20,
+          backgroundColor: "#151718",
         }}
       >
-        <ThemedText style={styles.instructions}>
+        <Text style={styles.instructions}>
           Enter Server Ip/domain Including protocol
-        </ThemedText>
+        </Text>
         {errorMessage ? (
-          <ThemedText style={styles.instructions}>{errorMessage}</ThemedText>
+          <Text style={styles.instructions}>{errorMessage}</Text>
         ) : null}
         <TextInput
           style={[styles.input, { borderColor: isError ? "red" : "#444648" }]}
@@ -114,9 +118,9 @@ export default function Index() {
             checkServer();
           }}
         >
-          <ThemedText style={styles.buttonText}>Submit</ThemedText>
+          <Text style={styles.buttonText}>Submit</Text>
         </TouchableOpacity>
-      </ThemedView>
+      </View>
     </KeyboardAvoidingView>
   );
 }
@@ -125,9 +129,11 @@ const styles = StyleSheet.create({
   welcome: {
     fontSize: 40,
     lineHeight: 40,
+    color: "#ECEDEE",
   },
   instructions: {
     textAlign: "center",
+    color: "#ECEDEE",
   },
   input: {
     height: 50,
