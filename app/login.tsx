@@ -151,6 +151,7 @@ const styles = StyleSheet.create({
   instructions: {
     textAlign: "center",
     marginBottom: 20,
+    color: "#ECEDEE",
     
   },
   input: {
